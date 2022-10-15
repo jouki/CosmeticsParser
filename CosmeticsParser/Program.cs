@@ -158,7 +158,8 @@ namespace CosmeticsParser
                 var filename = @", filename = """ + cosmetic.cosmeticId + @".png""";
                 var riftTier = cosmetic.riftTier != -1 ? ", tome = " + cosmetic.rift.id + ", tier = " + cosmetic.riftTier : string.Empty;
                 var rDate = cosmetic.startDate != null ? @", rDate = """ + cosmetic.startDate.ToString("dd.MM.yyyy") + @"""" : string.Empty;
-                result += String.Format("\t" + @"{{id = {0}, name = {1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}}}" + ((i < resultObjs.Count || bodyType == BodyType.Outfit) ? "," : string.Empty) + "\n",
+                var purchasable = @", purchasable = " + cosmetic.purchasable.ToString().ToLower();
+                result += String.Format("\t" + @"{{id = {0}, name = {1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}}}" + ((i < resultObjs.Count || bodyType == BodyType.Outfit) ? "," : string.Empty) + "\n",
                     i,
                     Utils.RefactorName(cosmetic.cosmeticName.Trim()),
                     rarity,
@@ -168,6 +169,7 @@ namespace CosmeticsParser
                     collection,
                     cellsPrice,
                     shardsPrice,
+                    purchasable,
                     rDate,
                     riftTier,
                     filename,
@@ -204,11 +206,13 @@ namespace CosmeticsParser
                 var collection = cosmetic.collectionId != -1 ? ", collectionId = " + cosmetic.collectionId : string.Empty; //currently there's none cosmetic piece that'd be in collection but not part of an outfit
                 var rarity = String.Format(", rarity = {0}", (int) cosmetic.rarity);
                 var fakeOutfit = ", fakeOutfit = true";
-                result += String.Format("\t" + @"{{id = {0}{1}{2}{3}{4}{5}}}" + (i + 1 < filteredOutfitlessCosmeticsList.Count ? "," : string.Empty) + "\n",
+                var purchasable = @", purchasable = " + cosmetic.purchasable.ToString().ToLower();
+                result += String.Format("\t" + @"{{id = {0}{1}{2}{3}{4}{5}{6}}}" + (i + 1 < filteredOutfitlessCosmeticsList.Count ? "," : string.Empty) + "\n",
                     continuedIndex++,
                     character,
                     rarity,
                     fakeOutfit,
+                    purchasable,
                     collection,
                     pieces
                 );
