@@ -135,7 +135,7 @@ namespace CosmeticsParser
                 var charType = string.Empty;
                 var rarity = string.Empty;
                 var linkedSet = string.Empty;
-                
+                //TODO: tome
                 if(bodyType == BodyType.Outfit || bodyType == BodyType.Charm)
                 {
                     rarity = @", rarity = " + (int) cosmetic.rarity; //rarity for outfits and charms

@@ -29,7 +29,7 @@ namespace CosmeticsParser
         public int id;
         public string dbdName;
         public string name;
-        //public string filename;
+        public string filename;
         public int requirement;
         public DateTime endDate;
         public List<RiftTier> tiers;
@@ -39,7 +39,7 @@ namespace CosmeticsParser
             this.id = int.Parse(key.Replace("Tome", string.Empty));
             this.dbdName = key;
             this.name = Utils.RefactorName(value["Name"]);
-            //this.filename = ((string) value["Banner"]).Split('/').Last(); //The Banner stopped being present in API (as of 16.12.2022)
+            this.filename = ((string) value["Banner"]).Split('/').Last();
             this.requirement = (int) value["Requirement"];
             this.endDate = value["EndDate"];
             this.tiers = GetRiftTierList(value["TierInfo"]);
