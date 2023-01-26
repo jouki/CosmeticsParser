@@ -25,7 +25,7 @@ namespace CosmeticsParser
 
             var cosmeticsJson = Encoding.UTF8.GetString(new WebClient().DownloadData(cosmeticsUrl));
             var wikiJson = Encoding.UTF8.GetString(new WebClient().DownloadData("https://deadbydaylight.fandom.com/api.php?action=scribunto-console&title=Module:API&question==require(%27Module:API%27).getData()&format=json"));
-            Dictionary<string, dynamic> cosmetics = JsonHelper.Deserialize(cosmeticsJson);
+            Dictionary<string, dynamic> cosmetics = JsonHelper.Deserialize(cosmeticsJson)["data"]; //JSON now returns success flag and error list. We want only "data" section
             Dictionary<string, dynamic> wikiChars = JsonHelper.Deserialize(wikiJson);
             var resultString = wikiChars["return"];
             List<dynamic> resultJson = JsonHelper.Deserialize(resultString);

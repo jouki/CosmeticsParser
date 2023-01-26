@@ -14,7 +14,7 @@ namespace CosmeticsParser
         public int wikiID;
 
         private static readonly string charactersJson = Encoding.UTF8.GetString(new WebClient().DownloadData("http://dbd-info.com/api/characters"));
-        private static Dictionary<string, dynamic> characters = JsonHelper.Deserialize(charactersJson);
+        private static Dictionary<string, dynamic> characters = JsonHelper.Deserialize(charactersJson)["data"];
 
         //Ideal result = 0
         public static readonly List<dynamic> incorrectCharNames = characters.Values.Select(x => x["Name"]).ToList()
