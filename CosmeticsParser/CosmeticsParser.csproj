@@ -89,6 +89,7 @@
     <Compile Include="Enums.cs" />
     <Compile Include="Cosmetic.cs" />
     <Compile Include="JsonHelper.cs" />
+    <Compile Include="Language.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rifts.cs" />

@@ -2,15 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace CosmeticsParser
 {
     public static class WikiMappers
     {
+        private static string _wikiLangCode;
+        public static string WikiLangCode
+        {
+            get
+            {
+                if(_wikiLangCode == null)
+                {
+                    _wikiLangCode = GetLanguageCodeWikiMapping(Language.SelectedLanguage);
+                }
+
+                return _wikiLangCode;
+            }
+        }
         //Killers
         private static Dictionary<int, string> _killers;
-        public static Dictionary<int, string> killers
+        public static Dictionary<int, string> Killers
         {
             get
             {
@@ -25,7 +39,7 @@ namespace CosmeticsParser
 
         //Survivors
         private static Dictionary<int, string> _survivors;
-        public static Dictionary<int, string> survivors {
+        public static Dictionary<int, string> Survivors {
             get
             {
                 if(_survivors == null)
@@ -39,12 +53,13 @@ namespace CosmeticsParser
 
         private static Dictionary<int, string> PopulateWikiCharTable(string tableName)
         {
-            var url = String.Format(@"https://deadbydaylight.fandom.com/api.php?action=scribunto-console&title=Module:X&question=require(%22Module:Datatable%22);mw.log(mw.text.jsonEncode(" + tableName + @"))&format=json");
+            var url = BuildWikiApiLink(Module.Datatable, "mw.text.jsonEncode(" + tableName + ")");
+            //String.Format(@"https://deadbydaylight.fandom.com/api.php?action=scribunto-console&title=Module:X&question=require(%22Module:Datatable%22);mw.log(mw.text.jsonEncode(" + tableName + @"))&format=json");
             var rawJson = Encoding.UTF8.GetString(new WebClient().DownloadData(url));
             var result = ((List<dynamic>) JsonHelper.Deserialize(JsonHelper.Deserialize(rawJson)["print"]))
                 .ToDictionary(
                 x => (int) x["id"],
-                x => (string) ((tableName.Equals("killers") ? "The " : string.Empty) + (x.ContainsKey("dbdName") ? x["dbdName"] : x["name"]))
+                x => (string) ((tableName.Equals("killers") ? GetArticle(x) : string.Empty) + (x.ContainsKey("dbdName") ? x["dbdName"] : x["name"]))
             );
 
             return result;
@@ -87,6 +102,61 @@ namespace CosmeticsParser
             return "#NAN#";
         }
 
+        public static string GetLanguageCodeWikiMapping(Language lang)
+        {
+            //should trim the content of langCode after dash if there is one
+            return lang.languageCode.Substring(0, lang.languageCode.IndexOf("-") + lang.languageCode.Length + 1);
+        }
+
+        public static string BuildWikiApiLink(Module module, string operation = "")
+        {
+            var result = string.Empty;
+            string wikiBaseLink = "https://deadbydaylight.fandom.com/";
+            string wikiApiLinkPart = "api.php?action=scribunto-console&title=Module:X&question=";
+            string consoleQuery = String.Format(
+                "mod=require(%22Module:{0}%22);" +
+                "mw.log({1})",
+                GetMappedWikiModule(module), operation
+            );
+            string outputFormat = "&format=json";
+
+            result = 
+                wikiBaseLink + 
+                (Language.IsSelectedEnglish() ? string.Empty : WikiLangCode + "/") +
+                wikiApiLinkPart +
+                consoleQuery +
+                outputFormat;
+
+            return result;
+        }
+
+        public static string GetMappedWikiModule(Module module)
+        {
+            return module.ToString().Replace("_", "/");
+        }
+
+        public static string GetArticle(dynamic obj)
+        {
+            if(Language.IsSelectedEnglish())
+            {
+                return "The ";
+            }
+            var result = string.Empty;
+            if(obj.ContainsKey("article"))
+            {
+                if(bool.TryParse(obj["article"], out bool success)){
+                    //Currently Unused
+                }
+                else
+                {
+                    var url = BuildWikiApiLink(Module.Languages, "mod.article_" + WikiLangCode + @"({article=""" + obj["article"] + @"""})");
+                    string rawJson = Encoding.UTF8.GetString(new WebClient().DownloadData(url));
+                    result = JsonHelper.Deserialize(rawJson)["print"].Replace("\n", string.Empty);
+                }
+            }
+
+            return result;
+        }
         
 
     }

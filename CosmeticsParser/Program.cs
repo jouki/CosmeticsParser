@@ -12,18 +12,17 @@ namespace CosmeticsParser
     class Program
     {
         private List<string> _outfitPieceNames = new List<string>();
+        public static string LinkBase = "https://dbd-info.com/api/";
 
         [STAThread]
         static void Main(string[] args)
         {
             Introduction();
-            string cosmeticsUrl = GetAPICosmeticsUrl();
-
+            Language.LanguageSelection();
             Console.Clear();
             Console.WriteLine("Processing...");
 
-
-            var cosmeticsJson = Encoding.UTF8.GetString(new WebClient().DownloadData(cosmeticsUrl));
+            var cosmeticsJson = GetDataFromUrl(LinkBase + "cosmetics");
             var wikiJson = Encoding.UTF8.GetString(new WebClient().DownloadData("https://deadbydaylight.fandom.com/api.php?action=scribunto-console&title=Module:API&question==require(%27Module:API%27).getData()&format=json"));
             Dictionary<string, dynamic> cosmetics = JsonHelper.Deserialize(cosmeticsJson)["data"]; //JSON now returns success flag and error list. We want only "data" section
             Dictionary<string, dynamic> wikiChars = JsonHelper.Deserialize(wikiJson);
@@ -32,7 +31,7 @@ namespace CosmeticsParser
             Dictionary<dynamic, dynamic> wikiCharsRaw = ((List<dynamic>) JsonHelper.Deserialize(JsonHelper.Deserialize(wikiJson)["return"])).ToDictionary(x => x["name"], x => x);
 
 
-            var filteredCosmetics = cosmetics.Values.Where(x => x.ContainsKey("Character")).ToList(); //Removing any element that has no assignment of Character //excluding charms?
+            var filteredCosmetics = cosmetics.Values.Where(x => x.ContainsKey("Character") && IsNotCurrency(x)).ToList(); //Removing any element that has no assignment of Character //excluding charms?
             var CosList = new List<Cosmetic>();
             filteredCosmetics.ForEach(filtered => CosList.Add(new Cosmetic(filtered)));
 
@@ -71,40 +70,28 @@ namespace CosmeticsParser
             var riftRewardsNotMapped = Rift.rifts.SelectMany(x => x.tiers.Select(t => t.rewardId)).ToList().Where(x => !CosList.Where(y => y.riftTier > -1).Select(y => y.cosmeticId).Contains(x)).Distinct().ToList();
             //Console.Write(string.Join("\n", wikiStrings.Values));
 
-            Clipboard.SetText(string.Join("\n", wikiStrings.Values));
+            //Clipboard.SetText(string.Join("\n", wikiStrings.Values));
+            Clipboard.SetDataObject(string.Join("\n", wikiStrings.Values));
+        }
+
+        private static bool IsNotCurrency(dynamic obj)
+        {
+            return obj.ContainsKey("Type") && !obj["Type"].Equals("Currency");
         }
 
         private static void Introduction()
         {
             Console.WriteLine("Welcome! The script will parse the Cosmetics JSON data from dbd-info.com");
             Console.WriteLine("Be aware the the following script override your clipboard with data.\n");
-            //Console.WriteLine("Press any key to proceed.");
-            Console.WriteLine("Select language:.");
-
         }
-        private static string GetAPICosmeticsUrl()
-        {
-            Console.WriteLine("1. English\n" +
-                              "2. Italian\n" +
-                              "3. Polish");
-            int lang;
-            string linkBase = "https://dbd-info.com/api/cosmetics";
-            string langString = string.Empty;
-            if(int.TryParse(Console.ReadKey().KeyChar.ToString(), out lang))
-            {
-                switch((int) lang)
-                {
-                    case 1: break;
-                    case 2:
-                        langString = "?language=it";
-                        break;
-                    case 3:
-                        langString = "?language=pl";
-                        break;
 
-                }
-            }
-            return linkBase + langString;
+        public static string GetDataFromUrl(string link)
+        {
+            var webClient = new WebClient();
+            var result = String.Empty;
+            webClient.Headers.Add(HttpRequestHeader.Cookie, String.Format("language={0}", Language.SelectedLanguage.languageCode));
+
+            return Encoding.UTF8.GetString(webClient.DownloadData(link));
         }
         private static string GetCollectionListString()
         {

@@ -13,13 +13,13 @@ namespace CosmeticsParser
         public int dbdID;
         public int wikiID;
 
-        private static readonly string charactersJson = Encoding.UTF8.GetString(new WebClient().DownloadData("http://dbd-info.com/api/characters"));
+        private static readonly string charactersJson = Program.GetDataFromUrl(Program.LinkBase + "characters");
         private static Dictionary<string, dynamic> characters = JsonHelper.Deserialize(charactersJson)["data"];
 
         //Ideal result = 0
         public static readonly List<dynamic> incorrectCharNames = characters.Values.Select(x => x["Name"]).ToList()
-            .Where(x => !WikiMappers.survivors.Values.Any(y => y.Equals(x)) &&
-                        !WikiMappers.killers.Values.Any(y => (/*"The " + */y).Equals(x))).ToList();
+            .Where(x => !WikiMappers.Survivors.Values.Any(y => y.Equals(x)) &&
+                        !WikiMappers.Killers.Values.Any(y => (/*"The " + */y).Equals(x))).ToList();
 
         public static readonly bool anyIncorrectCharNames = incorrectCharNames.Count == 0;
 
@@ -31,7 +31,7 @@ namespace CosmeticsParser
                 if( _survivors == null)
                 {
                     _survivors = new Dictionary<int, int>();
-                    foreach(var (key, value) in WikiMappers.survivors.Select(x => (x.Key, x.Value)))
+                    foreach(var (key, value) in WikiMappers.Survivors.Select(x => (x.Key, x.Value)))
                     {
                         if(characters.Any(x => x.Value["Name"] == value))
                         {
@@ -51,7 +51,7 @@ namespace CosmeticsParser
             { 
                 if (_killers == null) {
                     _killers = new Dictionary<int, int>();
-                    foreach(var (key, value) in WikiMappers.killers.Select(x => (x.Key, x.Value))) {
+                    foreach(var (key, value) in WikiMappers.Killers.Select(x => (x.Key, x.Value))) {
                         if(characters.Any(x => x.Value["Name"] == value))
                         {
                             var killerName = int.Parse(characters.FirstOrDefault(x => x.Value["Name"] == value).Key);
@@ -65,7 +65,7 @@ namespace CosmeticsParser
 
 
         private static Dictionary<int, int> _allCharacters;
-        public static Dictionary<int, int> AllCharacters
+        public static Dictionary<int, int> AllCharacters //<dbdID, wikiID>
         {
             get
             {
@@ -79,13 +79,19 @@ namespace CosmeticsParser
 
         public Character(int dbdID)
         {
-            dynamic character;
-            characters.TryGetValue(dbdID.ToString(), out character);
-            //var character = characters.Values.Select(x => x[""]);
+            try
+            {
+                dynamic character;
+                characters.TryGetValue(dbdID.ToString(), out character);
+                //var character = characters.Values.Select(x => x[""]);
 
-            this.dbdID = dbdID;
-            this.wikiID = dbdID >= 0 ? AllCharacters[dbdID] : -1;
-            this.name = dbdID > 0 ? character["Name"]: "";
+                this.dbdID = dbdID;
+                this.wikiID = dbdID >= 0 ? AllCharacters[dbdID] : -1;
+                this.name = dbdID > 0 ? character["Name"] : "";
+            }catch(Exception ex)
+            {
+                throw new Exception("Failed when fetching character. Is the Wiki tables (survivors and killers) up to date?");
+            }
         }
     }
 }

@@ -56,4 +56,34 @@ namespace CosmeticsParser
         Free,
         Premium
     }
+
+    public enum Module
+    {
+        Datatable,
+        Datatable_SoS,
+        Datatable_Icons,
+        Datatable_Loadout,
+        Datatable_Perks,
+        Datatable_Offerings,
+        Datatable_Cosmetics,
+
+        Cosmetics,
+        DLCs,
+        Killers,
+        Maps,
+        Offerings,
+        Perks,
+        SoS,
+        Survivors,
+        Various,
+
+        Extensions,
+        Languages,
+        MathOps,
+        PerkImage,
+        Strings,
+        Utils
+    }
+
+
 }

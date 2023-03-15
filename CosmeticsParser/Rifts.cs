@@ -9,7 +9,7 @@ namespace CosmeticsParser
 {
     public class Rift
     {
-        private static readonly string riftsJson = Encoding.UTF8.GetString(new WebClient().DownloadData("https://dbd-info.com/api/rifts"));
+        private static readonly string riftsJson = Program.GetDataFromUrl(Program.LinkBase + "rifts"); 
         private static Dictionary<string, dynamic> objectifiedRifts = JsonHelper.Deserialize(riftsJson)["data"];
 
         private static List<Rift> _rifts;
