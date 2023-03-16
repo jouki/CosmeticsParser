@@ -143,7 +143,7 @@ namespace CosmeticsParser
 
         public static string GetArticle(dynamic obj)
         {
-            Console.Write("\rRetrieving Wiki logic for killer's larticle... [{0}/{1}]", _articleCounter, _loadedAPIKillers);
+            Console.Write("\rRetrieving Wiki logic for killer's article... [{0}/{1}]", _articleCounter, _loadedAPIKillers);
             if(Language.IsSelectedEnglish())
             {
                 _articleCounter++;
