@@ -9,6 +9,8 @@ namespace CosmeticsParser
 {
     public static class WikiMappers
     {
+        private static int _articleCounter = 1; //used for informative output
+        private static int _loadedAPIKillers = 0;
         private static string _wikiLangCode;
         public static string WikiLangCode
         {
@@ -30,6 +32,7 @@ namespace CosmeticsParser
             {
                 if(_killers == null)
                 {
+                    Console.WriteLine("Processing Wiki Table Killers...");
                     _killers = PopulateWikiCharTable("killers");
                 }
 
@@ -44,7 +47,8 @@ namespace CosmeticsParser
             {
                 if(_survivors == null)
                 {
-                   _survivors = PopulateWikiCharTable("survivors");
+                    Console.WriteLine("Processing Wiki Table Survivors...");
+                    _survivors = PopulateWikiCharTable("survivors");
                 }
 
                 return _survivors;
@@ -56,12 +60,14 @@ namespace CosmeticsParser
             var url = BuildWikiApiLink(Module.Datatable, "mw.text.jsonEncode(" + tableName + ")");
             //String.Format(@"https://deadbydaylight.fandom.com/api.php?action=scribunto-console&title=Module:X&question=require(%22Module:Datatable%22);mw.log(mw.text.jsonEncode(" + tableName + @"))&format=json");
             var rawJson = Encoding.UTF8.GetString(new WebClient().DownloadData(url));
-            var result = ((List<dynamic>) JsonHelper.Deserialize(JsonHelper.Deserialize(rawJson)["print"]))
-                .ToDictionary(
+            var deserealizedJson = (List<dynamic>) JsonHelper.Deserialize(JsonHelper.Deserialize(rawJson)["print"]);
+            _loadedAPIKillers = deserealizedJson.Count;
+            var result = deserealizedJson.ToDictionary(
                 x => (int) x["id"],
                 x => (string) ((tableName.Equals("killers") ? GetArticle(x) : string.Empty) + (x.ContainsKey("dbdName") ? x["dbdName"] : x["name"]))
             );
 
+            if(tableName.Equals("killers")) Console.WriteLine();
             return result;
         }
 
@@ -137,8 +143,10 @@ namespace CosmeticsParser
 
         public static string GetArticle(dynamic obj)
         {
+            Console.Write("\rRetrieving Wiki logic for killer's larticle... [{0}/{1}]", _articleCounter, _loadedAPIKillers);
             if(Language.IsSelectedEnglish())
             {
+                _articleCounter++;
                 return "The ";
             }
             var result = string.Empty;
@@ -154,7 +162,7 @@ namespace CosmeticsParser
                     result = JsonHelper.Deserialize(rawJson)["print"].Replace("\n", string.Empty);
                 }
             }
-
+            _articleCounter++;
             return result;
         }
         

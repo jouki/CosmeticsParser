@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -69,9 +71,28 @@ namespace CosmeticsParser
             //Check
             var riftRewardsNotMapped = Rift.rifts.SelectMany(x => x.tiers.Select(t => t.rewardId)).ToList().Where(x => !CosList.Where(y => y.riftTier > -1).Select(y => y.cosmeticId).Contains(x)).Distinct().ToList();
             //Console.Write(string.Join("\n", wikiStrings.Values));
+            var result = string.Join("\n", wikiStrings.Values);
+            result = "--Current timestamp: " + DateTime.Now.ToString() + Environment.NewLine +
+                "--Language: " + Language.SelectedLanguage.languageName + '-' + Language.SelectedLanguage.languageCode + Environment.NewLine +
+                result;
 
-            //Clipboard.SetText(string.Join("\n", wikiStrings.Values));
-            Clipboard.SetDataObject(string.Join("\n", wikiStrings.Values));
+            try
+            {
+                Clipboard.SetDataObject(result);
+                //Clipboard.SetText(result);
+            }
+            catch (Exception ex)
+            {
+                //Clipboard.SetDataObject(result);
+            }
+            StoreAndOpenDataInFile(result);
+        }
+
+        private static void StoreAndOpenDataInFile(string result)
+        {
+            string file = String.Format(@"CP_{0}.txt", Language.SelectedLanguage.languageCode);
+            File.WriteAllText(file, result);
+            Process.Start(file);
         }
 
         private static bool IsNotCurrency(dynamic obj)

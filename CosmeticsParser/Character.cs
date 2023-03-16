@@ -30,6 +30,7 @@ namespace CosmeticsParser
             {
                 if( _survivors == null)
                 {
+                    Console.WriteLine("Processing DBD API Table Survivors...");
                     _survivors = new Dictionary<int, int>();
                     foreach(var (key, value) in WikiMappers.Survivors.Select(x => (x.Key, x.Value)))
                     {
@@ -50,6 +51,7 @@ namespace CosmeticsParser
             get
             { 
                 if (_killers == null) {
+                    Console.WriteLine("Processing DBD API Table Killers...");
                     _killers = new Dictionary<int, int>();
                     foreach(var (key, value) in WikiMappers.Killers.Select(x => (x.Key, x.Value))) {
                         if(characters.Any(x => x.Value["Name"] == value))
@@ -79,9 +81,9 @@ namespace CosmeticsParser
 
         public Character(int dbdID)
         {
+            dynamic character = new object();
             try
             {
-                dynamic character;
                 characters.TryGetValue(dbdID.ToString(), out character);
                 //var character = characters.Values.Select(x => x[""]);
 
@@ -90,7 +92,10 @@ namespace CosmeticsParser
                 this.name = dbdID > 0 ? character["Name"] : "";
             }catch(Exception ex)
             {
-                throw new Exception("Failed when fetching character. Is the Wiki tables (survivors and killers) up to date?");
+                
+                throw new Exception("Failed when fetching character. Is the Wiki tables (survivors and killers) up to date?" +
+                    "\nName: " + character["Name"] +
+                    "\nDBD API ID: " + dbdID);
             }
         }
     }
