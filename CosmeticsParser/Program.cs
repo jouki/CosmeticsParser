@@ -18,7 +18,7 @@ namespace CosmeticsParser
 
         [STAThread]
         static void Main(string[] args)
-        {
+        {            
             Introduction();
             Language.LanguageSelection();
             Console.Clear();
@@ -66,16 +66,20 @@ namespace CosmeticsParser
 
             wikiStrings.Add("collections", GetCollectionListString());
 
-            var asd = Rift.rifts;
-
             //Check
             var riftRewardsNotMapped = Rift.rifts.SelectMany(x => x.tiers.Select(t => t.rewardId)).ToList().Where(x => !CosList.Where(y => y.riftTier > -1).Select(y => y.cosmeticId).Contains(x)).Distinct().ToList();
-            //Console.Write(string.Join("\n", wikiStrings.Values));
-            var result = string.Join("\n", wikiStrings.Values);
-            result = "--Current timestamp: " + DateTime.Now.ToString() + Environment.NewLine +
-                "--Language: " + Language.SelectedLanguage.languageName + '-' + Language.SelectedLanguage.languageCode + Environment.NewLine +
-                result;
 
+
+            //Final Processing
+            var timeOffsetString = DateTimeOffset.Now.Offset.ToString();
+            var timeOffset = long.Parse(timeOffsetString.Substring(0, timeOffsetString.IndexOf(":")));
+            var region = RegionInfo.CurrentRegion.ThreeLetterISORegionName;
+            var utc = DateTime.UtcNow;
+            var result = string.Join("\n", wikiStrings.Values);
+            result = 
+                String.Format("--Current timestamp: {0} ({1} {2}) [UTC:{3}]", DateTime.Now.ToString(), region, timeOffset.ToString("+#;-#;0"), utc) + Environment.NewLine +
+                String.Format("--Language: {0}-{1}", Language.SelectedLanguage.languageName, Language.SelectedLanguage.languageCode) + Environment.NewLine +
+                result;
             try
             {
                 Clipboard.SetDataObject(result);
