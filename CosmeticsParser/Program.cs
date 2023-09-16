@@ -20,7 +20,12 @@ namespace CosmeticsParser
         static void Main(string[] args)
         {            
             Introduction();
-            Language.LanguageSelection();
+            var test = Language.LanguageSelection();
+            if(test == null)
+            {
+                SpecialFeature();
+                return;
+            }
             Console.Clear();
             Console.WriteLine("Processing...");
 
@@ -268,5 +273,13 @@ namespace CosmeticsParser
         }
 
 
+        private static void SpecialFeature()
+        {
+
+
+
+            Console.WriteLine("Program is at its end.");
+            Console.Read();
+        }
     }
 }

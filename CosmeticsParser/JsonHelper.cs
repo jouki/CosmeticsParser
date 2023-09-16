@@ -27,5 +27,14 @@ namespace CosmeticsParser
                     return ((JValue) token).Value;
             }
         }
+
+        public static string NormalizeString(string str)
+        {
+            return str
+                .Replace(" "/*<= nbsp there*/, " ")  //Removing NBSP
+                .Replace("’", "'")
+                .Replace("« ", @"""") //translating french quotes to standard one
+                .Replace(" »", @"""");//ditto
+        }
     }
 }

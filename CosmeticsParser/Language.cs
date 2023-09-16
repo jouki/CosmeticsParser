@@ -58,6 +58,11 @@ namespace CosmeticsParser
                 {
                     return SelectLanguage(lang);
                 }
+                else if(lang == 0)
+                {
+                    Console.WriteLine("Special Feature SELECTED");
+                    return null;
+                }
                 else
                 {
                     Console.Clear();

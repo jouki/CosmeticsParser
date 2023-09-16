@@ -14,7 +14,7 @@ namespace CosmeticsParser
         public int wikiID;
 
         private static readonly string charactersJson = Program.GetDataFromUrl(Program.LinkBase + "characters");
-        private static Dictionary<string, dynamic> characters = JsonHelper.Deserialize(charactersJson)["data"];
+        private static Dictionary<string, dynamic> characters = RetrieveCharacters();
 
         //Ideal result = 0
         public static readonly List<dynamic> incorrectCharNames = characters.Values.Select(x => x["Name"]).ToList()
@@ -95,8 +95,20 @@ namespace CosmeticsParser
                 
                 throw new Exception("Failed when fetching character. Is the Wiki tables (survivors and killers) up to date?" +
                     "\nName: " + character["Name"] +
-                    "\nDBD API ID: " + dbdID);
+                    "\nDBD API ID: " + dbdID +
+                    "\n\nList of all unfetched characters:" +
+                    String.Join(Environment.NewLine, incorrectCharNames));
             }
+        }
+
+        private static Dictionary<string, dynamic> RetrieveCharacters()
+        {
+            Dictionary<string, dynamic> result = JsonHelper.Deserialize(charactersJson)["data"];
+            foreach(dynamic character in result)
+            {
+                character.Value["Name"] = JsonHelper.NormalizeString(character.Value["Name"]);
+            }
+            return result;
         }
     }
 }
