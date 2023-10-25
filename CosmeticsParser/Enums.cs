@@ -41,7 +41,8 @@ namespace CosmeticsParser
     public enum Currency
     {
         Shards,
-        Cells
+        Cells,
+        HalloweenEventCurrency
     }
 
     public enum CharType

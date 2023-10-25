@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("CosmeticsParser")]
-[assembly: AssemblyCopyright("Copyright ©  2023")]
+[assembly: AssemblyCopyright("Copyright © 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,5 +33,5 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 // [assembly: AssemblyVersion("majorVer.minorVer.gameVer.BuildIteration")]
-[assembly: AssemblyVersion("1.1.722.1")]
-[assembly: AssemblyFileVersion("1.1.722.1")]
+[assembly: AssemblyVersion("1.1.730.1")]
+[assembly: AssemblyFileVersion("1.1.730.1")]
