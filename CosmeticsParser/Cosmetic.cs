@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CosmeticsParser
 {
-    public class Cosmetic
+    public class Cosmetic : IComparable<Cosmetic>
     {
         public static List<string> _collections = new List<string>();
         private static Dictionary<string, Dictionary<BodyType, BodyType>> atypicalBodyTypeMapping =
@@ -51,13 +51,14 @@ namespace CosmeticsParser
         public Dictionary<Currency, int> prices;
         public Rift rift;
         public int riftTier;
+        public bool visceral;
 
         public KeyValuePair<int, int> mappedChar;
         public CharType charType;
 
         public Cosmetic(dynamic obj) {
             this.cosmeticId = obj["CosmeticId"];
-            this.cosmeticName = obj["CosmeticName"];
+            this.cosmeticName = obj["CosmeticName"].Trim();
             this.character = new Character((int) obj["Character"]);
             this.description = obj["Description"];
             this.iconFilePathList = obj["IconFilePathList"];
@@ -82,6 +83,7 @@ namespace CosmeticsParser
             this.prices = ccys.ToDictionary(ccy => ((Currency) Enum.Parse(typeof(Currency), ccy.Key)),
                                             ccy => (int) ccy.Value); //ccyDic;
             MapRift();
+            this.visceral = obj.ContainsKey("Prefix") ? obj["Prefix"] == "Visceral" : false;
             MapChar();
             MapCharType(obj);
         }
@@ -158,6 +160,15 @@ namespace CosmeticsParser
                 this.mappedChar = Character.AllCharacters.First(x => x.Key == this.character.dbdID);
             }
         }
-    }
 
+        public int CompareTo(Cosmetic incomingCosmetic)
+        {
+            return this.cosmeticName.Replace(@"""", String.Empty)
+                .Replace(@"The ", String.Empty)
+                .CompareTo(incomingCosmetic.cosmeticName
+                    .Replace(@"""", String.Empty)
+                    .Replace(@"The ", String.Empty)
+                );
+        }
+    }
 }

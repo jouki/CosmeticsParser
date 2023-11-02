@@ -41,6 +41,7 @@ namespace CosmeticsParser
             var filteredCosmetics = cosmetics.Values.Where(x => x.ContainsKey("Character") && IsNotCurrency(x)).ToList(); //Removing any element that has no assignment of Character //excluding charms?
             var CosList = new List<Cosmetic>();
             filteredCosmetics.ForEach(filtered => CosList.Add(new Cosmetic(filtered)));
+            CosList.Sort();
 
             //TODO REMOVE? maybe not needed at all
             //var charmCollection = cosmetics.Values.Where(x => x.ContainsKey("Type") && x["Type"] == "Charm").ToList();
@@ -52,6 +53,7 @@ namespace CosmeticsParser
                 x => allCosmetics.Add(
                     x,
                     CosList.Where(y => x.Contains(y.type)).ToList()));
+            
 
             Dictionary<string, string> wikiStrings = new Dictionary<string, string>();
             foreach(var bodyTypeCategory in WikiMappers.bodyTypes)
@@ -172,11 +174,12 @@ namespace CosmeticsParser
                 var cellsPrice = (cosmetic.prices.Keys.Contains(Currency.Cells) ? @", ac = " + cosmetic.prices[Currency.Cells] : string.Empty);
                 var shardsPrice = (cosmetic.prices.Keys.Contains(Currency.Shards) ? @", is = " + cosmetic.prices[Currency.Shards] : string.Empty);
                 var collection = cosmetic.collectionId != -1 ? ", collectionId = " + cosmetic.collectionId : string.Empty;
+                var visceral = cosmetic.visceral ? ", visceral = " + cosmetic.visceral.ToString().ToLower() : string.Empty;
                 var filename = @", filename = """ + cosmetic.cosmeticId + @".png""";
                 var riftTier = cosmetic.riftTier != -1 ? ", tome = " + cosmetic.rift.id + ", tier = " + cosmetic.riftTier : string.Empty;
                 var rDate = cosmetic.startDate != null ? @", rDate = """ + cosmetic.startDate.ToString("dd.MM.yyyy") + @"""" : string.Empty;
                 var purchasable = @", purchasable = " + cosmetic.purchasable.ToString().ToLower();
-                result += String.Format("\t" + @"{{id = {0}, name = {1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}}}" + ((i < resultObjs.Count || bodyType == BodyType.Outfit) ? "," : string.Empty) + "\n",
+                result += String.Format("\t" + @"{{id = {0}, name = {1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}}}" + ((i < resultObjs.Count || bodyType == BodyType.Outfit) ? "," : string.Empty) + "\n",
                     i,
                     Utils.RefactorName(cosmetic.cosmeticName.Trim()),
                     rarity,
@@ -184,6 +187,7 @@ namespace CosmeticsParser
                     linkedSet,
                     outfitPieces,
                     collection,
+                    visceral,
                     cellsPrice,
                     shardsPrice,
                     purchasable,
