@@ -24,6 +24,8 @@ namespace CosmeticsParser
         Hand = 12,
         UpperBody = 13,
         KillerLegs = 14,
+        Badge = 15,
+        Banner = 16,
     }
     public enum Rarity
     {
