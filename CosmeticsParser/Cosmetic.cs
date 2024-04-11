@@ -70,7 +70,7 @@ namespace CosmeticsParser
             this.linkedSet = obj.ContainsKey("Unbreakable") ? obj["Unbreakable"] : false;
             this.purchasable = obj["Purchasable"];
             if(obj.ContainsKey("EndDate")) this.endDate = obj["EndDate"];
-            if(obj.ContainsKey("StartDate")) this.startDate = obj["StartDate"];
+            if(obj.ContainsKey("ReleaseDate")) this.startDate = obj["ReleaseDate"];
             this.rarity = Enum.Parse(typeof(Rarity), obj["Rarity"]);
             this.outfitItems = obj.ContainsKey("OutfitItems") ? ((IEnumerable) obj["OutfitItems"]).Cast<string>().ToList() : null;//.Select(x => (string)x).ToList();
 

@@ -52,10 +52,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>C188B9BA78B9EAF4EADA3245CF2AF6D2ED572447</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>C4578955398C0056F94E9D8078438A1BF1D82791</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>CosmeticsParser_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>CosmeticsParser_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -112,7 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="CosmeticsParser_TemporaryKey.pfx" />
+    <None Include="CosmeticsParser_1_TemporaryKey.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
