@@ -86,6 +86,7 @@ namespace CosmeticsParser
             result = 
                 String.Format("--Current timestamp: {0} ({1} {2}) [UTC:{3}]", DateTime.Now.ToString(), region, timeOffset.ToString("+#;-#;0"), utc) + Environment.NewLine +
                 String.Format("--Language: {0}-{1}", Language.SelectedLanguage.languageName, Language.SelectedLanguage.languageCode) + Environment.NewLine +
+                String.Format("--Version of CP: {0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()) + Environment.NewLine +
                 result;
             try
             {
