@@ -96,7 +96,10 @@ namespace CosmeticsParser
             }
             else
             {
-                collectionName = CultureInfo.GetCultures(CultureTypes.NeutralCultures).ToList().First(x => x.Name.Equals("en")).TextInfo.ToTitleCase(collectionName.Trim().ToLower()); ;
+                collectionName = CultureInfo.GetCultures(CultureTypes.NeutralCultures)
+                    .ToList()
+                    .First(x => x.Name.Equals("en"))
+                    .TextInfo.ToTitleCase(Utils.RefactorCollectionName(collectionName.Trim().ToLower()));
                 if(!collectionName.Equals(string.Empty) && !_collections.Contains(collectionName))
                 {
                     _collections.Add(collectionName);
