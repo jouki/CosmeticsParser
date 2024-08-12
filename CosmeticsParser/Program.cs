@@ -78,31 +78,38 @@ namespace CosmeticsParser
 
 
             //Final Processing
+            var outfitsResult = string.Join("\n", wikiStrings.Where(x => x.Key.Equals(WikiMappers.GetTableNameByBodyType(BodyType.Outfit))).ToDictionary(x => x.Key, x => x.Value).Values);
+            var piecesSesult = string.Join("\n", wikiStrings.Where(x => !x.Key.Equals(WikiMappers.GetTableNameByBodyType(BodyType.Outfit))).ToDictionary(x => x.Key, x => x.Value).Values);
+            //try
+            //{
+            //    Clipboard.SetDataObject(result);
+            //    //Clipboard.SetText(result);
+            //}
+            //catch (Exception ex)
+            //{
+            //    //Clipboard.SetDataObject(result);
+            //}
+            StoreAndOpenDataInFile(GetMetadataHeaderString() + outfitsResult, "outfits");
+            StoreAndOpenDataInFile(GetMetadataHeaderString() + piecesSesult, "pieces");
+        }
+
+        private static string GetMetadataHeaderString()
+        {
             var timeOffsetString = DateTimeOffset.Now.Offset.ToString();
             var timeOffset = long.Parse(timeOffsetString.Substring(0, timeOffsetString.IndexOf(":")));
             var region = RegionInfo.CurrentRegion.ThreeLetterISORegionName;
             var utc = DateTime.UtcNow;
-            var result = string.Join("\n", wikiStrings.Values);
-            result = 
+
+            return
                 String.Format("--Current timestamp: {0} ({1} {2}) [UTC:{3}]", DateTime.Now.ToString(), region, timeOffset.ToString("+#;-#;0"), utc) + Environment.NewLine +
                 String.Format("--Language: {0}-{1}", Language.SelectedLanguage.languageName, Language.SelectedLanguage.languageCode) + Environment.NewLine +
-                String.Format("--Version of CP: {0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()) + Environment.NewLine +
-                result;
-            try
-            {
-                Clipboard.SetDataObject(result);
-                //Clipboard.SetText(result);
-            }
-            catch (Exception ex)
-            {
-                //Clipboard.SetDataObject(result);
-            }
-            StoreAndOpenDataInFile(result);
+                String.Format("--Version of CP: {0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()) + Environment.NewLine;
+
         }
 
-        private static void StoreAndOpenDataInFile(string result)
+        private static void StoreAndOpenDataInFile(string result, string contentType = "NaN")
         {
-            string file = String.Format(@"CP_{0}.txt", Language.SelectedLanguage.languageCode);
+            string file = String.Format(@"CP_{0}_{1}.txt", Language.SelectedLanguage.languageCode, contentType);
             File.WriteAllText(file, result);
             Process.Start(file);
         }
