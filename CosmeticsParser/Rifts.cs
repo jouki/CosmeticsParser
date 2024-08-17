@@ -62,8 +62,8 @@ namespace CosmeticsParser
             foreach(var tierObj in jsonTiers)
             {
                 int tier = (int) tierObj["TierId"];
-                List<dynamic> freeRewards = tierObj.ContainsKey("free") ? tierObj["free"] : new List<dynamic>();
-                List<dynamic> premiumReards = tierObj.ContainsKey("premium") ? tierObj["premium"] : new List<dynamic>();
+                List<dynamic> freeRewards = tierObj.ContainsKey("Free") && tierObj["Free"] != null ? tierObj["Free"] : new List<dynamic>();
+                List<dynamic> premiumReards = tierObj.ContainsKey("Premium") && tierObj["Premium"] != null ? tierObj["Premium"] : new List<dynamic>();
                 //jsonTiers.Select(x => (x["tierId"], x.ToDictionary(t => t.Key, t => t.Value)))
 
                 freeRewards.ForEach(x => list.Add(new RiftTier(tier, RiftReward.Free, x)));

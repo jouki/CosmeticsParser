@@ -12,9 +12,9 @@
         {
             this.tier = tier;
             this.rewardType = rewardType;
-            this.rewardId = rewardObj["id"];
-            this.amount = (int) rewardObj["amount"];
-            this.type = rewardObj["type"];
+            this.rewardId = rewardObj["Id"];
+            this.amount = (int) rewardObj["Amount"];
+            this.type = rewardObj["Type"];
         }
     }
 }
